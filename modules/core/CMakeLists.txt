@@ -1,5 +1,13 @@
 set(the_description "The Core Functionality")
+if (CMAKE_CXX_COMPILER_ID STREQUAL GNU)
+  # Create a version script for the GNU ld.
+  set(CMAKE_VERBOSE_MAKEFILE ON)
+  set(_symbols "OPENCV3.3.0 { global: extern \"C++\" {*;}; *;  };")
+  set(_version_script "${CMAKE_CURRENT_BINARY_DIR}/version.script")
+  file(WRITE ${_version_script} "${_symbols}\n")
 
+  set(CMAKE_SHARED_LINKER_FLAGS " -Wl,--version-script,\"${_version_script}\"")
+endif()
 ocv_add_dispatched_file(mathfuncs_core SSE2 AVX AVX2)
 ocv_add_dispatched_file(stat SSE4_2 AVX2)
 
