@@ -1,7 +1,15 @@
 set(the_description "All OpenCV modules")
 set(OPENCV_MODULE_IS_PART_OF_WORLD FALSE)
 set(BUILD_opencv_world_INIT OFF)
+if (CMAKE_CXX_COMPILER_ID STREQUAL GNU)
+  # Create a version script for the GNU ld.
+  set(CMAKE_VERBOSE_MAKEFILE ON)
+  set(_symbols "OPENCV3.3.0 { global: extern \"C++\" {*;}; *;  };")
+  set(_version_script "${CMAKE_CURRENT_BINARY_DIR}/version.script")
+  file(WRITE ${_version_script} "${_symbols}\n")
 
+  set(CMAKE_SHARED_LINKER_FLAGS " -Wl,--version-script,\"${_version_script}\"")
+endif()
 if(NOT BUILD_SHARED_LIBS)
   set(OPENCV_MODULE_TYPE STATIC)
   set(OPENCV_WORLD_FLAGS_PROPERTY STATIC_LIBRARY_FLAGS)
